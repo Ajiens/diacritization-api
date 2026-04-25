@@ -3,8 +3,6 @@ from fastapi import HTTPException, UploadFile
 import pytesseract
 import numpy as np
 from PIL import Image
-import arabic_reshaper
-from bidi.algorithm import get_display
 
 def preprocess_image(img):
     # Grayscale
@@ -29,39 +27,22 @@ def preprocess_image(img):
 
     return processed
 
-def ocr_with_confidence(image):
-    data = pytesseract.image_to_data(
-        image,
-        config='-l ara --psm 7',
-        output_type=pytesseract.Output.DATAFRAME
-    )
+def do_tesseract(image):
+    # Sesuaikan config jika perlu
+    custom_config = f'--oem 1 --psm 3'
+    text = pytesseract.image_to_string(image, lang='ara', config=custom_config)
+    return text
 
-    data = data[data.conf > 60]
-    return ' '.join(data.text.dropna())
-
-def postprocess_arabic_text(text):
-    # Reshape Arabic letters
-    reshaped_text = arabic_reshaper.reshape(text)
-
-    # Fix RTL direction
-    bidi_text = get_display(reshaped_text)
-
-    return bidi_text
-
-def arabic_ocr_pipeline(file: UploadFile):
+def arabic_ocr_pipeline(file: bytes) -> str:
     '''This is main method from OCR Phase, returning from Image to text'''
-    img = read_image_from_upload(file)
+    img = read_image_from_bytes(file)
     processed_image = preprocess_image(img)
 
-    raw_text = ocr_with_confidence(processed_image)
-
-    # final_text = postprocess_arabic_text(raw_text)
+    raw_text = do_tesseract(processed_image)
 
     return raw_text
 
-def read_image_from_upload(file: UploadFile):
-    image_bytes = file.file.read()
-
+def read_image_from_bytes(image_bytes: bytes):
     if not image_bytes:
         raise HTTPException(status_code=400, detail="Empty file")
 
