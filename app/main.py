@@ -3,7 +3,8 @@ import base64
 from fastapi import FastAPI, File, HTTPException, UploadFile
 # from services import process_text
 from ocr import arabic_ocr_pipeline
-from diacritic import diacritic_text
+from addabit_diacritic import diacritic_text as addabit
+from shakkala_diacritic import diacritic_text as shakkala
 from request_model import DiacritizeRequest, OCRRequest
 
 app = FastAPI(
@@ -18,7 +19,12 @@ def root():
 
 @app.post("/diacritize")
 async def diacritize_endpoint(req: DiacritizeRequest):
-    result = diacritic_text(req.text)
+    if req.model == "ad-dabit":
+        result = addabit(req.text)
+    elif req.model == "shakkala":
+        result = shakkala(req.text)
+    else:
+        raise HTTPException(status_code=400, detail="Invalid model specified")
 
     return {
         "text": req.text,
