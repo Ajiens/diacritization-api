@@ -14,6 +14,9 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Install torch CPU-only terlebih dahulu secara terpisah
+RUN pip install --no-cache-dir torch==2.2.2 --index-url https://download.pytorch.org/whl/cpu
+
 COPY . .
 
 EXPOSE 8000
