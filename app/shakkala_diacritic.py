@@ -6,7 +6,7 @@ import re
 from functools import lru_cache
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Embedding, Dense, Dropout, LSTM, Bidirectional, TimeDistributed
-from keras.initializers import glorot_normal
+from tensorflow.keras.initializers import glorot_normal
 
 class ShakkalaDiacritizationPipeline:
     def __init__(self, constants_path="shakkala_const", model_weight_name="avg_20_fixed.h5", use_gpu=True):
