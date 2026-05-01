@@ -2,10 +2,10 @@ import base64
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
 # from services import process_text
-from ocr import arabic_ocr_pipeline
-from addabit_diacritic import diacritic_text as addabit
-from shakkala_diacritic import diacritic_text as shakkala
-from request_model import DiacritizeRequest, OCRRequest
+from app.ocr import arabic_ocr_pipeline
+from app.addabit_diacritic import diacritic_text as addabit
+from app.shakkala_diacritic import diacritic_text as shakkala
+from app.request_model import DiacritizeRequest, OCRRequest
 
 app = FastAPI(
     title="Simple NLP API",
